@@ -1,17 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"github.com/urusofam/urlShortener/internal/config"
-	"log"
+	"log/slog"
+	"os"
 )
 
 func main() {
-	cfg, err := config.LoadConfig("./config/local.yaml")
+	cfg := config.LoadConfig("./config/local.yaml")
 
-	if err != nil {
-		log.Fatalf("error loading config: %s", err)
+	logger := SetupLogger(cfg.Env)
+	logger.Info("starting url-shortener", slog.String("env", cfg.Env))
+}
+
+func SetupLogger(env string) *slog.Logger {
+	var logger *slog.Logger
+	switch env {
+	case "local":
+		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	case "dev":
+		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	case "prod":
+		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}
-
-	fmt.Printf("%+v\n", cfg)
+	return logger
 }

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	"time"
 )
@@ -26,12 +25,8 @@ type DBConfig struct {
 	Name     string `yaml:"name" env-default:"url"`
 }
 
-func LoadConfig(configPath string) (*Config, error) {
+func LoadConfig(configPath string) *Config {
 	var cfg Config
-	err := cleanenv.ReadConfig(configPath, &cfg)
-	if err != nil {
-		return nil, fmt.Errorf("error loading config: %s", err)
-	}
-
-	return &cfg, nil
+	cleanenv.ReadConfig(configPath, &cfg)
+	return &cfg
 }
