@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/urusofam/urlShortener/internal/config"
+	"github.com/urusofam/urlShortener/internal/log/sl"
 	"github.com/urusofam/urlShortener/internal/storage"
 	"log/slog"
 	"os"
@@ -23,11 +26,19 @@ func main() {
 
 	strg, err := storage.NewStorage(dbUrl)
 	if err != nil {
-		logger.Error("failed to init storage", Err(err))
+		logger.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
 	}
 	logger.Info(fmt.Sprintf("connected to %s", dbUrl))
 	defer strg.Close()
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
+
 }
 
 func SetupLogger(env string) *slog.Logger {
@@ -41,11 +52,4 @@ func SetupLogger(env string) *slog.Logger {
 		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}
 	return logger
-}
-
-func Err(err error) slog.Attr {
-	return slog.Attr{
-		Key:   "error",
-		Value: slog.StringValue(err.Error()),
-	}
 }
