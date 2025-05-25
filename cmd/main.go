@@ -28,39 +28,6 @@ func main() {
 	}
 	logger.Info(fmt.Sprintf("connected to %s", dbUrl))
 	defer strg.Close()
-
-	err = strg.SaveURL("https://pkg.go.dev/github.com/jackc/pgx/v5", "pgx")
-	if err != nil {
-		logger.Error("failed to save url", Err(err))
-		os.Exit(1)
-	}
-	logger.Info("saved url")
-
-	url, err := strg.GetURL("pgx")
-	if err != nil {
-		logger.Error("failed to get url", Err(err))
-		os.Exit(1)
-	}
-	logger.Info("got url", slog.String("url", url))
-
-	err = strg.UpdateUrlByAlias("https://pkg.go.dev/github.com/jackc/pgx", "pgx")
-	if err != nil {
-		logger.Error("failed to update url", Err(err))
-	}
-	logger.Info("updated url")
-
-	url, err = strg.GetURL("pgx")
-	if err != nil {
-		logger.Error("failed to get url", Err(err))
-	}
-	logger.Info("got new url", slog.String("url", url))
-
-	err = strg.DeleteURL("pgx")
-	if err != nil {
-		logger.Error("failed to delete url", Err(err))
-		os.Exit(1)
-	}
-	logger.Info("deleted url")
 }
 
 func SetupLogger(env string) *slog.Logger {
