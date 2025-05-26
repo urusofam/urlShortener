@@ -1,4 +1,5 @@
 env: "local"
+alias_length: 6
 
 database:
   host: "localhost"

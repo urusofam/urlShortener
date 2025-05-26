@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	Env    string           `yaml:"env" env-default:"local"`
-	Server HttpServerConfig `yaml:"http_server"`
-	DB     DBConfig         `yaml:"database"`
+	Env         string           `yaml:"env" env-default:"local"`
+	AliasLength string           `yaml:"alias_length" env-default:"6"`
+	Server      HttpServerConfig `yaml:"http_server"`
+	DB          DBConfig         `yaml:"database"`
 }
 
 type HttpServerConfig struct {
