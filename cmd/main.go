@@ -5,9 +5,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/urusofam/urlShortener/internal/config"
+	"github.com/urusofam/urlShortener/internal/http/handlers/url/save"
 	"github.com/urusofam/urlShortener/internal/log/sl"
 	"github.com/urusofam/urlShortener/internal/storage"
 	"log/slog"
+	"net/http"
 	"os"
 )
 
@@ -39,6 +41,23 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
+	router.Post("/url", save.New(logger, strg, cfg.AliasLength))
+
+	logger.Info("start server", slog.String("address", cfg.Server.Addr))
+
+	srv := http.Server{
+		Addr:         cfg.Server.Addr,
+		Handler:      router,
+		ReadTimeout:  cfg.Server.Timeout,
+		WriteTimeout: cfg.Server.Timeout,
+		IdleTimeout:  cfg.Server.IdleTimeout,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
+		logger.Error("failed to start server", sl.Err(err))
+	}
+
+	logger.Info("server stopped")
 }
 
 func SetupLogger(env string) *slog.Logger {

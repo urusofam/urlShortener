@@ -7,7 +7,7 @@ import (
 
 type Config struct {
 	Env         string           `yaml:"env" env-default:"local"`
-	AliasLength string           `yaml:"alias_length" env-default:"6"`
+	AliasLength int              `yaml:"alias_length" env-default:"6"`
 	Server      HttpServerConfig `yaml:"http_server"`
 	DB          DBConfig         `yaml:"database"`
 }

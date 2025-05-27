@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -9,6 +10,11 @@ import (
 type Storage struct {
 	db *pgxpool.Pool
 }
+
+var (
+	ErrURLNotFound = errors.New("url not found")
+	ErrURLExists   = errors.New("url exists")
+)
 
 func NewStorage(dbUrl string) (*Storage, error) {
 	const op = "storage.NewStorage"
